@@ -3,6 +3,9 @@
 venv
 ./venv
 
+./src/__pycache__
+__pycache__
+
 
 # dependencies
 /node_modules
