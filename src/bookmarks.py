@@ -7,6 +7,12 @@ from src.database import Bookmark, db
 
 bookmarks = Blueprint("bookmarks", __name__, url_prefix="/api/v1/bookmarks")
 
+"""
+http://127.0.0.1:5000/api/v1/bookmarks?page=1&per_page=8 : this line means on page 1 you can receive 8 data
+http://127.0.0.1:5000/api/v1/bookmarks?page=1 : this line means you can get the data of page 1
+
+"""
+
 
 @bookmarks.route('/', methods=['POST', 'GET'])
 @jwt_required()
