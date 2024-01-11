@@ -10,7 +10,7 @@ bookmarks = Blueprint("bookmarks", __name__, url_prefix="/api/v1/bookmarks")
 
 @bookmarks.route('/', methods=['POST', 'GET'])
 @jwt_required()
-def get_bookmarks():
+def handle_bookmarks():
     current_user = get_jwt_identity()
     if request.method == 'POST':
         body=request.get_json().get('body', '')
@@ -33,4 +33,31 @@ def get_bookmarks():
             "created_at": bookmark.created_at,
             "updated_at": bookmark.updated_at
         }), HTTP_201_CREATED
+    else:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 5, type=int)
+        bookmarks = Bookmark.query.filter_by(user_id=current_user).paginate(page=page, per_page=per_page)
+
+        data = []
+        for item in bookmarks:
+            data.append({
+                "id": item.id,
+                "url": item.url,
+                "short_url": item.short_url,
+                "visit": item.visits,
+                "body": item.body,
+                "created_at": item.created_at,
+                "updated_at": item.updated_at
+            })
+        meta = {
+            "page": bookmarks.page,
+            'pages': bookmarks.pages,
+            'total_count': bookmarks.total,
+            'prev_page': bookmarks.prev_num,
+            'next_page': bookmarks.next_num,
+            'has_next': bookmarks.has_next,
+            'has_prev': bookmarks.has_prev,
+
+        }
+        return jsonify({'data': data, 'meta': meta}), HTTP_200_OK
         
