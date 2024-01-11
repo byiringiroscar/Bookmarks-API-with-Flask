@@ -86,3 +86,36 @@ def get_bookmark(id):
         "updated_at": bookmark.updated_at
     }), HTTP_200_OK
         
+
+@bookmarks.put("/<int:id>")
+@bookmarks.patch("/<int:id>")
+@jwt_required()
+def editbookmark(id):
+    current_user = get_jwt_identity()
+    bookmark = Bookmark.query.filter_by(user_id=current_user, id=id).first()
+    if not bookmark:
+        return jsonify({"message": "bookmark not found"}), HTTP_404_NOT_FOUND
+    
+    body=request.get_json().get('body', '')
+    url=request.get_json().get('url', '')
+
+    if not validators.url(url):
+        return jsonify({"error": "url is not valid"}), HTTP_400_BAD_REQUEST
+    
+    if Bookmark.query.filter_by(url=url).first():
+        return jsonify({"error": "url already exists"}), HTTP_409_CONFLICT
+    
+    bookmark.url = url
+    bookmark.body = body
+
+    db.session.commit()
+    return jsonify({
+        "id": bookmark.id,
+        "url": bookmark.url,
+        "short_url": bookmark.short_url,
+        "visit": bookmark.visits,
+        "body": bookmark.body,
+        "created_at": bookmark.created_at,
+        "updated_at": bookmark.updated_at
+    }), HTTP_200_OK
+    
