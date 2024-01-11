@@ -1,9 +1,10 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, jsonify
 import os
 from src.database import db, Bookmark
 from src.auth import auth
 from src.bookmarks import bookmarks
 from flask_jwt_extended import JWTManager
+from src.constants.http_status_code import *
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -34,5 +35,9 @@ def create_app(test_config=None):
             bookmark.visits = bookmark.visits+1
             db.session.commit()
             return redirect(bookmark.url)
+    
+    @app.errorhandler(HTTP_404_NOT_FOUND)
+    def page_not_found(e):
+        return jsonify({"error": "page not found"}), HTTP_404_NOT_FOUND
     
     return app
