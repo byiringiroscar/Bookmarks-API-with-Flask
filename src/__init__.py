@@ -14,6 +14,8 @@ def create_app(test_config=None):
 
     db.app=app
     db.init_app(app)
+    with app.app_context():
+        db.create_all()  # Create tables only if they don't exist
     # app.register_blueprint(auth)
     # app.register_blueprint(bookmarks)
     
