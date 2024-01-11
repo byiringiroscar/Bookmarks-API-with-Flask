@@ -2,6 +2,7 @@ from flask import Flask
 import os
 from src.database import db
 from src.auth import auth
+from src.bookmarks import bookmarks
 from flask_jwt_extended import JWTManager
 
 def create_app(test_config=None):
@@ -24,6 +25,6 @@ def create_app(test_config=None):
     with app.app_context():
         db.create_all()  # Create tables only if they don't exist
     app.register_blueprint(auth)
-    # app.register_blueprint(bookmarks)
+    app.register_blueprint(bookmarks)
     
     return app
