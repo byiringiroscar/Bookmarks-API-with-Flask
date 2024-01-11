@@ -75,6 +75,15 @@ def login():
         
 
 
+@auth.post('/token/refresh')
+@jwt_required(refresh=True)
+def refresh():
+    user_id = get_jwt_identity()
+    access = create_access_token(identity=user_id)
+    return jsonify({
+        'access': access
+    }), HTTP_200_OK
+
 
 @auth.get('/me')
 @jwt_required()
