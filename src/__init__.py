@@ -1,5 +1,6 @@
 from flask import Flask
 import os
+from src.database import db
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -11,8 +12,9 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
-    @app.get('/')
-    def index():
-        return 'Hello, world!'
+    db.app=app
+    db.init_app(app)
+    # app.register_blueprint(auth)
+    # app.register_blueprint(bookmarks)
     
     return app
