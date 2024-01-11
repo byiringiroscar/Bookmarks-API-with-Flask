@@ -3,6 +3,7 @@
 venv
 ./venv
 
+
 # dependencies
 /node_modules
 /.pnp
@@ -37,6 +38,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+*.pyc
 *.pyc
 *.pyc
 *.pyc
