@@ -5,6 +5,8 @@ from src.auth import auth
 from src.bookmarks import bookmarks
 from flask_jwt_extended import JWTManager
 from src.constants.http_status_code import *
+from flasgger import Swagger, swag_from
+from src.config.swagger import template, swagger_config
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -14,7 +16,11 @@ def create_app(test_config=None):
             SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"),
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             JWT_SECRET_KEY=os.environ.get("JWT_SECRET_KEY"),
-            DEBUG=os.environ.get("FLASK_DEBUG", False)
+            DEBUG=os.environ.get("FLASK_DEBUG", False),
+            SWAGGER={
+                'title': 'Bookmarks API',
+                'uiversion': 3
+            }
         )
     else:
         app.config.from_mapping(test_config)
@@ -27,6 +33,9 @@ def create_app(test_config=None):
         db.create_all()  # Create tables only if they don't exist
     app.register_blueprint(auth)
     app.register_blueprint(bookmarks)
+
+    Swagger(app, template=template, config=swagger_config)
+
 
     @app.get('/<short_url>')
     def redirect_to_url(short_url):
