@@ -8,13 +8,14 @@ from src.constants.http_status_code import *
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    app.config['DEBUG'] = True
+    app.config['DEBUG'] = True 
     if test_config is None:
         app.config.from_mapping(
             SECRET_KEY=os.environ.get("SECRET_KEY"),
             SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"),
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             JWT_SECRET_KEY=os.environ.get("JWT_SECRET_KEY"),
+            DEBUG=os.environ.get("FLASK_DEBUG", False)
         )
     else:
         app.config.from_mapping(test_config)
@@ -39,5 +40,9 @@ def create_app(test_config=None):
     @app.errorhandler(HTTP_404_NOT_FOUND)
     def page_not_found(e):
         return jsonify({"error": "page not found"}), HTTP_404_NOT_FOUND
+    
+    @app.errorhandler(HTTP_500_INTERNAL_SERVER_ERROR)
+    def internal_server_error(e):
+        return jsonify({"error": "Something went wrong, we are working on it"}), HTTP_500_INTERNAL_SERVER_ERROR
     
     return app
