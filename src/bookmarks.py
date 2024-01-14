@@ -3,6 +3,7 @@ from flask import Blueprint, request
 from flask.json import jsonify
 import validators
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from flasgger import swag_from
 from src.database import Bookmark, db
 
 bookmarks = Blueprint("bookmarks", __name__, url_prefix="/api/v1/bookmarks")
@@ -137,6 +138,7 @@ def delete_bookmark(id):
 
 @bookmarks.get("/stats")
 @jwt_required()
+@swag_from("./docs/bookmarks/stats.yaml")
 def get_stats():
     current_user = get_jwt_identity()
     data = []
